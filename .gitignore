@@ -31,10 +31,10 @@ Thumbs.db
 runs/
 
 # --- Training outputs (only weights/ is committed; everything else regenerates) ---
-checkpoints/
-lora_weights/
-sd15/
-vaecheckpoints/
+/checkpoints/
+/lora_weights/
+/sd15/
+/vaecheckpoints/
 *.log
 
 # --- HuggingFace / Torch cache ---
