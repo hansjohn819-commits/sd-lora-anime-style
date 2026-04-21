@@ -1,0 +1,11 @@
+torch>=2.10,<3.0
+torchvision>=0.25,<1.0
+diffusers>=0.37
+transformers>=4.45
+peft>=0.18
+datasets>=4.5
+tensorboard>=2.20
+Pillow>=10.0
+accelerate>=1.12
+safetensors>=0.7
+numpy>=2.0
