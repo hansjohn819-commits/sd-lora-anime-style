@@ -76,12 +76,13 @@ This is why LoRA must be injected into the **text encoder** as well, not just th
 
 ```python
 # UNet — the core style/content predictor
+# SDXL uses r=32; SD 1.5 uses r=24 (smaller UNet, lower rank suffices)
 LoraConfig(
-    r=32, lora_alpha=32,
-    target_modules=["to_q", "to_k", "to_v", "to_out.0"],  # attention projections
+    r=32, lora_alpha=32,                                   # SDXL
+    target_modules=["to_q", "to_k", "to_v", "to_out.0"],   # attention projections
 )
 
-# Text encoder — to bind the trigger token
+# Text encoder — to bind the trigger token (r=8 for both SDXL and SD 1.5)
 LoraConfig(
     r=8, lora_alpha=8,
     target_modules=["q_proj", "v_proj"],
@@ -169,6 +170,30 @@ Training is organized as a single top-level script that runs all three experimen
 **Hardware used**: single consumer GPU, fp16 mixed precision, batch size 2. Full training run completes in under a day.
 
 **Dataset**: [none-yet/anime-captions](https://huggingface.co/datasets/none-yet/anime-captions) — 337K image-prompt pairs, of which 1,240 are used (1,200 train / 40 val).
+
+### Quickstart
+
+The best checkpoints are shipped in `weights/` via Git LFS, so inference works without retraining.
+
+```bash
+# 1. Install (git-lfs required to fetch the 186MB SDXL adapter and 157MB AE checkpoint)
+git lfs install
+git clone https://github.com/hansjohn819-commits/sd-lora-anime-style.git
+cd sd-lora-anime-style
+pip install -r requirements.txt
+
+# 2. Inference with shipped weights
+python inference.py --model sdxl --prompt "a photo of a woman walking on the street" --trigger --output out_sdxl.png
+python inference.py --model sd15 --prompt "two young women having dinner on the table" --trigger --output out_sd15.png
+python inference.py --model ae   --input_image assets/sdxl_girl_with.png --output recon.png
+
+# 3. Retrain from scratch (optional; all three stages run sequentially)
+python train.py --stage all
+# Or a single stage:
+python train.py --stage sdxl_train --lr 1e-5 --epochs 10
+```
+
+All training/inference settings live at the top of [`train.py`](train.py) and [`inference.py`](inference.py); edit defaults there or override via CLI flags.
 
 ---
 
