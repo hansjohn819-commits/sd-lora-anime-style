@@ -1,0 +1,2 @@
+weights/sdxl/unet/adapter_model.safetensors filter=lfs diff=lfs merge=lfs -text
+weights/custom_ae/vae_epoch035.pt filter=lfs diff=lfs merge=lfs -text
